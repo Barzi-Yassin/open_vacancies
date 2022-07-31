@@ -18,7 +18,7 @@ class CreateProfileScreen extends StatelessWidget {
         child: ListView(
           children: [
             SizedBox(
-              height: 50,
+              height: 90,
             ),
             NameField(),
             SizedBox(
@@ -257,7 +257,7 @@ class CreateButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(200, 0, 0, 0),
+      padding: const EdgeInsets.fromLTRB(200, 30, 0, 0),
       child: (ElevatedButton(onPressed: () {}, child: Text('Create Profile'))),
     );
   }
