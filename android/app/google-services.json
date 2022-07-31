@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "463907809306",
+    "project_id": "jobs-21d4f",
+    "storage_bucket": "jobs-21d4f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:463907809306:android:5fa8efab99deb26a8449a3",
+        "android_client_info": {
+          "package_name": "com.example.open_vacancies"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "463907809306-ftjvof9ok4ob318cjft7r637fde9trdk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzBFXxCoFPcE1HaHdXsWUzvMDYCuDPTPw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "463907809306-ftjvof9ok4ob318cjft7r637fde9trdk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
