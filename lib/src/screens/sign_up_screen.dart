@@ -68,6 +68,9 @@ class SignUpScreen extends StatelessWidget {
                 width: 300,
                 decoration: BoxDecoration(color: Colors.grey),
                 child: TextField(
+                  obscureText: true,
+                  enableSuggestions: false,
+                  autocorrect: false,
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
