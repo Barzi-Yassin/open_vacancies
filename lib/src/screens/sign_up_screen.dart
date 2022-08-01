@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:open_vacancies/src/screens/sign_in_screen.dart';
 
 class SignUpScreen extends StatelessWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
-
+  SignUpScreen({Key? key}) : super(key: key);
+  final myController = TextEditingController();
+  final myController2 = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,6 +53,7 @@ class SignUpScreen extends StatelessWidget {
                 width: 300,
                 decoration: BoxDecoration(color: Colors.grey),
                 child: TextField(
+                  controller: myController,
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -68,6 +71,7 @@ class SignUpScreen extends StatelessWidget {
                 width: 300,
                 decoration: BoxDecoration(color: Colors.grey),
                 child: TextField(
+                  controller: myController2,
                   obscureText: true,
                   enableSuggestions: false,
                   autocorrect: false,
@@ -88,7 +92,9 @@ class SignUpScreen extends StatelessWidget {
                   width: 100,
                   decoration: BoxDecoration(color: Colors.grey),
                   child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        push(context, myController, myController2);
+                      },
                       child: Text(
                         "Sign Up",
                         style: TextStyle(color: Colors.white),
@@ -98,5 +104,39 @@ class SignUpScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+Future push(
+    BuildContext context, final myController3, final myController4) async {
+  RegExp emailRegExp = RegExp(
+      r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$");
+  if (myController3.text == "" || myController4.text == "") {
+    showAlertDialog(context, "Please enter the required information");
+  } else if (!emailRegExp.hasMatch(myController3.text)) {
+    return showAlertDialog(context, "Enter a vaild Email");
+  } else {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? user;
+    try {
+      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
+        email: myController3.text,
+        password: myController4.text,
+      );
+      delayPushU(context);
+      user = userCredential.user;
+
+      await user?.reload();
+      user = auth.currentUser;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        showAlertDialog(context, "The password provided is too weak.");
+      } else if (e.code == 'email-already-in-use') {
+        showAlertDialog(context, 'The account already exists for that email.');
+      }
+    } catch (e) {
+      showAlertDialog(context, e.toString());
+    }
+    return user;
   }
 }

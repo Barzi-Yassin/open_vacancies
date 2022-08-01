@@ -149,7 +149,7 @@ showAlertDialog(BuildContext context, String x) {
 }
 
 Future delayPushU(BuildContext context) async {
-  await new Future.delayed(new Duration(milliseconds: 1500), () {
+  await new Future.delayed(new Duration(milliseconds: 10), () {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => HomeScreen()),
