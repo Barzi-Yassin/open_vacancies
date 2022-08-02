@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:open_vacancies/src/screens/messages_screen.dart';
+import 'package:open_vacancies/src/screens/no_access_screen.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -7,97 +10,28 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        body: Container(
-          width: double.infinity,
-          color: Colors.white,
-          child: Column(
-            children: [
-              // header section
-              Container(
-                // color: Colors.yellow,
-                height: 75,
-                width: double.infinity,
-                alignment: Alignment.center,
-                child: Text(
-                  'open vacancies'.toUpperCase(),
-                  style: const TextStyle(fontSize: 25),
-                ),
-              ),
-              // body section
-              Expanded(
-                child: ListView.builder(
-                  itemCount: 10,
-                  scrollDirection: Axis.vertical,
-                  itemBuilder: (context, index) {
-                    return const OutputContainerWidget(
-                      userName: "username",
-                      company: "company",
-                      roleDescription: "role descriptiion",
-                      url: 'https://www.google.com/',
-                    );
-                  },
-                ),
-              ),
-              // inputs section
-              const Divider(
-                color: Colors.black26,
-                height: 2,
-                thickness: 1,
-              ),
-              Container(
-                height: 240,
-                width: double.maxFinite,
-                decoration: const BoxDecoration(
-                  color: Colors.transparent,
-                ),
-                margin: const EdgeInsets.only(top: 10),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      height: 230,
-                      margin: const EdgeInsets.symmetric(horizontal: 22.0),
-                      child: Column(
-                        children: [
-                          const InputContainer(hintText: 'company/org'),
-                          const InputContainer(hintText: 'role'),
-                          const InputContainer(hintText: 'Url'),
-                          Container(
-                            // color: Colors.yellow,
-                            height: 40,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              color: Colors.lightBlue.shade50,
-                              border: Border.all(
-                                color: Colors.blue,
-                                width: 1,
-                              ),
-                            ),
-                            child: TextButton(
-                              onPressed: () {},
-                              child: const Text(
-                                'SEND',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.blue,
-                                  letterSpacing: 1,
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+      child: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text(snapshot.error.toString()),
+              );
+            }
+            print(snapshot.data.toString());
+
+            //TODO: if the user is logged in return the messages screen
+            if (snapshot.data == null) {
+              return NoAccessScreenView();
+            } else {
+              return MessagesScreenView();
+            }
+            //TODO: if the user isnt logged in return that you don't have access please login
+          }),
     );
   }
 }
@@ -222,4 +156,3 @@ class OutputContainerWidget extends StatelessWidget {
     );
   }
 }
-

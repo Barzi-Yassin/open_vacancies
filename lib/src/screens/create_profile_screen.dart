@@ -1,26 +1,50 @@
-// import 'package:flutter/material.dart';
-
-// class CreateProfileScreen extends StatelessWidget {
-//   const CreateProfileScreen({Key? key}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Scaffold();
-//   }
-// }
-
-
-
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_field, prefer_final_fields
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/custom_dropdown_button2.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_radio_group/flutter_radio_group.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:open_vacancies/src/screens/home_screen.dart';
 
-class CreateProfileScreen extends StatelessWidget {
-  const CreateProfileScreen({Key? key}) : super(key: key);
+class CreateProfileScreen extends StatefulWidget {
+  CreateProfileScreen({Key? key, this.user}) : super(key: key);
+  final User? user;
+
+  @override
+  State<CreateProfileScreen> createState() => _CreateProfileScreenState();
+}
+
+class _CreateProfileScreenState extends State<CreateProfileScreen> {
+  String? _selectedCity;
+  String? _selectedJob;
+
+  final TextEditingController _nameController = TextEditingController();
+
+  final TextEditingController _phoneNumberController = TextEditingController();
+
+  @override
+  void initState() {
+    debugPrint('init');
+    _selectedCity = cities[0];
+    _selectedJob = jobs[0];
+
+    // TODO: implement initState
+    super.initState();
+  }
+
+  final List<String> cities = [
+    'Erbil',
+    'Slemany',
+    'Duhok',
+    'Halabja',
+  ];
+
+  final List<String> jobs = [
+    'Flutter Developer',
+    'fullstack developer',
+    'web developer',
+    'chief executive officer',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -31,204 +55,165 @@ class CreateProfileScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: ListView(
           children: [
+            Text('${widget.user}'),
             SizedBox(
               height: 90,
             ),
-            NameField(),
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 240, 0),
+                  child: Text(
+                    'Name',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                  child: Container(
+                    height: 50,
+                    child: TextField(
+                      controller: _nameController,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        filled: true,
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 240, 0),
+                  child: Text(
+                    'Phone',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                  child: Container(
+                    height: 50,
+                    child: TextField(
+                      controller: _phoneNumberController,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        filled: true,
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+
             SizedBox(
               height: 8,
             ),
-            PhoneField(),
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 255, 0),
+                  child: Text(
+                    'City',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+                Padding(
+                    padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                    child: Container(
+                        height: 50,
+                        child: CustomDropdownButton2(
+                          buttonWidth: 300,
+                          hint: 'select city',
+                          buttonDecoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                  color: Color.fromARGB(255, 124, 124, 124)),
+                              color: Color.fromARGB(255, 237, 237, 237)),
+                          dropdownItems: cities,
+                          value: _selectedCity,
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedCity = value;
+                              debugPrint(_selectedCity!);
+                            });
+                          },
+                        )))
+              ],
+            ),
+
+            // PhoneField(),
+
             SizedBox(
               height: 8,
             ),
-            CityField(),
-            SizedBox(
-              height: 8,
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 220, 0),
+                  child: Text(
+                    'Job Category',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                  child: Container(
+                      height: 50,
+                      child: CustomDropdownButton2(
+                        buttonWidth: 300,
+                        hint: 'select job',
+                        buttonDecoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                                color: Color.fromARGB(255, 124, 124, 124)),
+                            color: Color.fromARGB(255, 237, 237, 237)),
+                        dropdownItems: jobs,
+                        value: _selectedJob,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedJob = value;
+                            debugPrint(_selectedJob!);
+                          });
+                        },
+                      )),
+                )
+              ],
             ),
-            JobCatagory(),
-            RadioGroup(),
-            CreateButton()
+
+            // RadioGroup(),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(200, 30, 0, 0),
+              child: (ElevatedButton(
+                  onPressed: () {
+                    //TODO: on users collection > create a document and id it> get the id from the constructor >
+                    // fill the document with the user data from this field
+                    if (widget.user != null) {
+                      FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(widget.user!.uid)
+                          .set({
+                        "name": _nameController.text,
+                        "phone": _phoneNumberController.text,
+                        "city": _selectedCity,
+                        "job_category": _selectedJob,
+                        "email": widget.user!.email,
+                        "uid": widget.user!.uid
+                      });
+                    }
+                  },
+                  child: Text('Create Profile'))),
+            ),
           ],
         ),
       )),
     );
-  }
-}
-
-class NameField extends StatelessWidget {
-  const NameField({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return (Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 0, 240, 0),
-          child: Text(
-            'Name',
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-          child: Container(
-            height: 50,
-            child: TextField(
-              obscureText: false,
-              decoration: InputDecoration(
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                filled: true,
-              ),
-            ),
-          ),
-        )
-      ],
-    ));
-  }
-}
-
-class PhoneField extends StatelessWidget {
-  const PhoneField({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return (Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 0, 240, 0),
-          child: Text(
-            'Phone',
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-          child: Container(
-            height: 50,
-            child: TextField(
-              obscureText: false,
-              decoration: InputDecoration(
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                filled: true,
-              ),
-            ),
-          ),
-        )
-      ],
-    ));
-  }
-}
-
-class CityField extends StatefulWidget {
-  const CityField({Key? key}) : super(key: key);
-
-  @override
-  State<CityField> createState() => _CityFieldState();
-}
-
-class _CityFieldState extends State<CityField> {
-  final List<String> cities = [
-    'Erbil',
-    'Slemany',
-    'Duhok',
-    'Halabja',
-  ];
-  String? selectedValue;
-  @override
-  Widget build(BuildContext context) {
-    initState() {
-      super.initState();
-      selectedValue = cities[0];
-    }
-
-    return (Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 0, 255, 0),
-          child: Text(
-            'City',
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
-        Padding(
-            padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-            child: Container(
-                height: 50,
-                child: CustomDropdownButton2(
-                  buttonWidth: 300,
-                  hint: 'select city',
-                  buttonDecoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border:
-                          Border.all(color: Color.fromARGB(255, 124, 124, 124)),
-                      color: Color.fromARGB(255, 237, 237, 237)),
-                  dropdownItems: cities,
-                  value: selectedValue,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedValue = value;
-                      debugPrint(selectedValue!);
-                    });
-                  },
-                )))
-      ],
-    ));
-  }
-}
-
-class JobCatagory extends StatefulWidget {
-  const JobCatagory({Key? key}) : super(key: key);
-
-  @override
-  State<JobCatagory> createState() => _JobCatagoryState();
-}
-
-class _JobCatagoryState extends State<JobCatagory> {
-  final List<String> jobs = [
-    'Flutter Developer',
-    'fullstack developer',
-    'web developer',
-    'chief executive officer',
-  ];
-  String? selectedValue;
-  @override
-  Widget build(BuildContext context) {
-    return (Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 220, 0),
-          child: Text(
-            'Job Category',
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-          child: Container(
-              height: 50,
-              child: CustomDropdownButton2(
-                buttonWidth: 300,
-                hint: 'select city',
-                buttonDecoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border:
-                        Border.all(color: Color.fromARGB(255, 124, 124, 124)),
-                    color: Color.fromARGB(255, 237, 237, 237)),
-                dropdownItems: jobs,
-                value: selectedValue,
-                onChanged: (value) {
-                  setState(() {
-                    selectedValue = value;
-                    debugPrint(selectedValue!);
-                  });
-                },
-              )),
-        )
-      ],
-    ));
   }
 }
 
@@ -264,21 +249,3 @@ class _RadioGroupState extends State<RadioGroup> {
     );
   }
 }
-
-class CreateButton extends StatelessWidget {
-  const CreateButton({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(200, 30, 0, 0),
-      child: (ElevatedButton(onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder: ((context) => HomeScreen())));
-
-      }, child: Text('Create Profile'))),
-    );
-  }
-}
-
-
-
