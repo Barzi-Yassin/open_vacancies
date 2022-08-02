@@ -20,7 +20,7 @@ class SignUpScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 200),
                 child: Container(
-                    height: 50,
+                    height: 40,
                     width: 100,
                     decoration: BoxDecoration(color: Colors.grey),
                     child: TextButton(

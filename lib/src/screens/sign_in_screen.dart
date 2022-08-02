@@ -15,6 +15,24 @@ class SignInScreen extends StatelessWidget {
           Column(
             children: [
               SizedBox(
+                height: 50,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 200),
+                child: Container(
+                    height: 40,
+                    width: 100,
+                    decoration: BoxDecoration(color: Colors.grey),
+                    child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          "SignUp",
+                          style: TextStyle(color: Colors.white),
+                        ))),
+              ),
+              SizedBox(
                 height: 100,
               ),
               Text(
