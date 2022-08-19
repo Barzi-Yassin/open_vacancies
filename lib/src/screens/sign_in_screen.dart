@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:open_vacancies/src/screens/create_profile_screen.dart';
 import 'package:open_vacancies/src/screens/home_screen.dart';
 
 class SignInScreen extends StatelessWidget {
@@ -127,7 +128,8 @@ Future push(
         email: myController.text,
         password: myController2.text,
       );
-      delayPushU(context);
+
+      delayPushU(context: context, userCredential: userCredential);
       user = userCredential.user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -166,11 +168,13 @@ showAlertDialog(BuildContext context, String x) {
   );
 }
 
-Future delayPushU(BuildContext context) async {
-  await new Future.delayed(new Duration(milliseconds: 10), () {
+Future delayPushU(
+    {required BuildContext context,
+    required UserCredential userCredential}) async {
+  await Future.delayed(Duration(milliseconds: 10), () {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => HomeScreen()),
+      MaterialPageRoute(builder: (context) => CreateProfileScreen()),
     );
   });
 }
